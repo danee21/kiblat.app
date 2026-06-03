@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Verifikasi Akurasi Kiblat Masjid</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        font-family: "Plus Jakarta Sans", sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-slate-50 min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-8">
+    <div class="bg-white rounded-3xl shadow-[0_20px_50px_rgba(8,112,184,0.07)] border border-slate-100 w-full max-w-5xl overflow-hidden flex flex-col md:flex-row">
+      <div class="w-full md:w-[35%] bg-slate-50/70 p-5 sm:p-6 md:p-8 border-b md:border-b-0 md:border-r border-slate-100 flex flex-col justify-between gap-6">
+        <div class="flex flex-col gap-5">
+          <div class="flex items-center gap-3 md:block">
+            <div class="inline-flex items-center justify-center p-2 bg-emerald-50 rounded-xl text-emerald-600 md:mb-3 shadow-sm border border-emerald-100 shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 md:h-6 md:w-6">
+                <circle cx="12" cy="12" r="10" stroke-dasharray="3 2" class="opacity-70" />
+                <path d="M9 9l3-1.5L15 9v4l-3 1.5L9 13V9z" fill="currentColor" class="text-slate-800" stroke="#0F172A" stroke-width="1" />
+                <path d="M9 10.2l3-1.5 3 1.5" stroke="#EAB308" stroke-width="0.8" />
+                <polygon points="12,12 17,7 15,6" fill="#EF4444" stroke="#EF4444" stroke-width="0.5" />
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">Akurasi Kiblat</h1>
+              <p class="text-[11px] md:text-xs text-slate-500 mt-0.5">Sistem Pengukuran & Visualisasi Lapangan</p>
+            </div>
+          </div>
+
+          <hr class="border-slate-200/60" />
+
+          <div class="flex flex-col gap-4">
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Sudut Kiblat Wilayah</label>
+              <div class="relative mt-1.5">
+                <input type="number" id="kiblatAngle" value="294" class="w-full p-2.5 pl-4 bg-slate-200/60 border border-slate-200 rounded-xl font-bold text-slate-600 cursor-not-allowed text-sm focus:outline-none" readonly />
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400">° UTARA</span>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 block">*Konstanta Geografis Nusantara (Locked 294°)</span>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Sudut Hadap Bangunan</label>
+              <div class="relative mt-1.5">
+                <input
+                  type="number"
+                  id="masjidAngle"
+                  value="285"
+                  min="0"
+                  max="360"
+                  class="w-full p-2.5 pl-4 bg-white border border-slate-200 rounded-xl font-bold text-blue-600 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                />
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-500">° AZIMUTH</span>
+              </div>
+              <span class="text-[10px] text-slate-400 mt-1 block">*Sesuai tembakan kompas di dinding mihrab</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Lebar Masjid (m)</label>
+                <input
+                  type="number"
+                  id="masjidWidthMeter"
+                  value="20"
+                  min="1"
+                  class="w-full mt-1.5 p-2.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Panjang (m)</label>
+                <input
+                  type="number"
+                  id="masjidLengthMeter"
+                  value="15"
+                  min="1"
+                  class="w-full mt-1.5 p-2.5 bg-white border border-slate-200 rounded-xl font-medium text-slate-700 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2.5 mt-4 md:mt-0">
+          <button id="btnDraw" class="w-full bg-blue-600 text-white py-2.5 sm:py-3 rounded-xl font-semibold text-sm hover:bg-blue-700 active:scale-[0.98] transition-all shadow-md shadow-blue-500/10 flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121 12m-7-2l1.172 1.172a4 4 0 005.656 0L22 10" />
+            </svg>
+            Simulasikan Posisi
+          </button>
+
+          <button id="btnDownload" class="w-full bg-slate-900 text-white py-2.5 sm:py-3 rounded-xl font-semibold text-sm hover:bg-slate-800 active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export File PNG
+          </button>
+
+          <div id="scaleInfo" class="text-[10px] sm:text-[11px] leading-relaxed text-slate-500 bg-slate-200/40 border border-slate-200/60 p-3 rounded-xl mt-1"></div>
+          <div id="rekomendasiInfo" class="text-[10px] sm:text-[11px] leading-relaxed p-3 rounded-xl border mt-1"></div>
+        </div>
+      </div>
+
+      <div class="w-full md:w-[65%] p-4 sm:p-6 md:p-8 flex flex-col bg-slate-50/20">
+        <div class="w-full flex justify-between items-center mb-3 px-1">
+          <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 shrink-0"> <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> MONITOR CANVAS PREVIEW </span>
+          <span id="txtDimensionLabel" class="text-[10px] sm:text-xs font-semibold text-slate-600 bg-white px-2.5 py-1 border border-slate-100 rounded-full shadow-sm whitespace-nowrap"></span>
+        </div>
+
+        <div id="canvasContainer" class="w-full bg-white p-3 sm:p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-100/80 flex items-center justify-center overflow-hidden">
+          <canvas id="kiblatCanvas" class="bg-slate-50/50 rounded-xl w-full h-auto max-w-full"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById("kiblatCanvas");
+      const container = document.getElementById("canvasContainer");
+      const ctx = canvas.getContext("2d");
+
+      function resizeCanvas() {
+        const containerWidth = container.clientWidth - (window.innerWidth < 640 ? 24 : 32);
+        canvas.width = containerWidth;
+        canvas.height = containerWidth * 0.78;
+        drawSimulation();
+      }
+
+      function drawSimulation() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const kiblatAngle = 294; // VALUE FIXED 294
+        const masjidAngle = parseFloat(document.getElementById("masjidAngle").value) || 0;
+        const wMeter = parseFloat(document.getElementById("masjidWidthMeter").value) || 1;
+        const lMeter = parseFloat(document.getElementById("masjidLengthMeter").value) || 1;
+
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const dynamicScale = canvas.width / 580;
+
+        const compassX = canvas.width - 70 * dynamicScale;
+        const compassY = canvas.height - 70 * dynamicScale;
+        const radiusKompas = Math.max(26, 38 * dynamicScale);
+
+        const maxAllowedPixels = Math.min(canvas.width, canvas.height) * 0.45;
+        const maxMeter = Math.max(wMeter, lMeter);
+        const pixelPerMeter = maxAllowedPixels / maxMeter;
+
+        const wPixel = wMeter * pixelPerMeter;
+        const lPixel = lMeter * pixelPerMeter;
+
+        document.getElementById("scaleInfo").innerHTML = `💡 <strong>Sistem Auto-Scale:</strong> 1 Meter nyata dikonversi otomatis menjadi <strong>${pixelPerMeter.toFixed(1)} piksel</strong> pada layar monitor.`;
+        document.getElementById("txtDimensionLabel").innerText = `📐 Dimensi: ${wMeter}m x ${lMeter}m`;
+
+        let selisih = kiblatAngle - masjidAngle;
+        while (selisih > 180) selisih -= 360;
+        while (selisih < -180) selisih += 360;
+
+        const absSelisih = Math.abs(selisih).toFixed(1);
+        const kolomRekomendasi = document.getElementById("rekomendasiInfo");
+
+        if (parseFloat(absSelisih) === 0) {
+          kolomRekomendasi.className = "text-[11px] leading-relaxed p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800";
+          kolomRekomendasi.innerHTML = `✅ <strong>Rekomendasi Lapangan:</strong> Struktur bangunan masjid sudah <strong>Sangat Presisi (100% Akurat)</strong> menghadap lurus ke arah kiblat.`;
+        } else {
+          kolomRekomendasi.className = "text-[11px] leading-relaxed p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-900";
+          const arahPutar = selisih > 0 ? "KANAN (Utara)" : "KIRI (Selatan)";
+          kolomRekomendasi.innerHTML = `📌 <strong>Rekomendasi Lapangan:</strong> Garis shaf di dalam masjid harus digeser/dimiringkan sebesar <strong>${absSelisih}° ke arah ${arahPutar}</strong> dari orientasi dinding saat ini agar akurat menghadap Ka'bah.`;
+        }
+
+        // ==========================================
+        // LINTASAN KIBLAT UTAMA (PUTUS-PUTUS)
+        // ==========================================
+        const kiblatRad = ((kiblatAngle - 90) * Math.PI) / 180;
+        const lineLength = Math.min(canvas.width, canvas.height) * 0.48;
+        const kabahX = centerX + lineLength * Math.cos(kiblatRad);
+        const kabahY = centerY + lineLength * Math.sin(kiblatRad);
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(centerX - lineLength * 0.5 * Math.cos(kiblatRad), centerY - lineLength * 0.5 * Math.sin(kiblatRad));
+        ctx.lineTo(kabahX, kabahY);
+        ctx.lineWidth = 2 * dynamicScale;
+        ctx.strokeStyle = "#475569";
+        ctx.setLineDash([6 * dynamicScale, 4 * dynamicScale]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+
+        // Menggambar Miniatur Ka'bah
+        ctx.save();
+        ctx.translate(kabahX, kabahY);
+        ctx.rotate((kiblatAngle * Math.PI) / 180);
+        const kabahSize = Math.max(18, 26 * dynamicScale);
+        ctx.fillStyle = "#0F172A";
+        ctx.fillRect(-kabahSize / 2, -kabahSize / 2, kabahSize, kabahSize);
+        ctx.fillStyle = "#EAB308";
+        ctx.fillRect(-kabahSize / 2, -kabahSize / 2 + 5 * dynamicScale, kabahSize, 3 * dynamicScale);
+
+        ctx.beginPath();
+        ctx.moveTo(0, kabahSize / 2 + 2);
+        ctx.lineTo(-4 * dynamicScale, kabahSize / 2 + 8 * dynamicScale);
+        ctx.lineTo(4 * dynamicScale, kabahSize / 2 + 8 * dynamicScale);
+        ctx.closePath();
+        ctx.fillStyle = "#0F172A";
+        ctx.fill();
+        ctx.restore();
+
+        // ==========================================
+        // GAMBAR KOTAK STRUKTUR MASJID
+        // ==========================================
+        const masjidRad = (masjidAngle * Math.PI) / 180;
+
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(masjidRad);
+
+        ctx.fillStyle = "#1E3A8A";
+        ctx.strokeStyle = "#0284C7";
+        ctx.lineWidth = 3 * dynamicScale;
+        ctx.lineJoin = "round";
+
+        ctx.fillRect(-wPixel / 2, -lPixel / 2, wPixel, lPixel);
+        ctx.strokeRect(-wPixel / 2, -lPixel / 2, wPixel, lPixel);
+
+        const mihrabW = wPixel * 0.22;
+        const mihrabL = Math.max(10, lPixel * 0.16);
+        ctx.fillStyle = "#0284C7";
+        ctx.fillRect(-mihrabW / 2, -lPixel / 2 - mihrabL, mihrabW, mihrabL);
+        ctx.strokeRect(-mihrabW / 2, -lPixel / 2 - mihrabL, mihrabW, mihrabL);
+
+        // Garis Struktur Bawaan (Putih)
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+        ctx.lineWidth = 1 * dynamicScale;
+        const safGap = Math.max(15, 25 * dynamicScale);
+        for (let i = -lPixel / 2 + safGap; i < lPixel / 2; i += safGap) {
+          ctx.beginPath();
+          ctx.moveTo(-wPixel / 2 + 4, i);
+          ctx.lineTo(wPixel / 2 - 4, i);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // ==========================================
+        // SMART FIX SAF: TETEP 100% SIKU TEGAK LURUS ($90^\circ$)
+        // ==========================================
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(masjidRad);
+        ctx.beginPath();
+        ctx.rect(-wPixel / 2, -lPixel / 2, wPixel, lPixel);
+        ctx.clip();
+        ctx.rotate(-masjidRad);
+        ctx.translate(-centerX, -centerY);
+
+        // Itunan sudut siku murni ngetutne kompas asli arah kiblat (294°)
+        const shafRad = (kiblatAngle * Math.PI) / 180;
+        ctx.strokeStyle = "#10B981";
+        ctx.lineWidth = 2 * dynamicScale;
+
+        const diagonalLength = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height) * 2;
+        const step = Math.max(18, 25 * dynamicScale);
+
+        for (let offset = -diagonalLength; offset < diagonalLength; offset += step) {
+          const lineCenterX = centerX + offset * Math.cos(kiblatRad);
+          const lineCenterY = centerY + offset * Math.sin(kiblatRad);
+
+          const startX = lineCenterX - diagonalLength * Math.cos(shafRad);
+          const startY = lineCenterY - diagonalLength * Math.sin(shafRad);
+          const endX = lineCenterX + diagonalLength * Math.cos(shafRad);
+          const endY = lineCenterY + dynamicScale + diagonalLength * Math.cos(shafRad);
+          const finalEndX = lineCenterX + diagonalLength * Math.cos(shafRad);
+          const finalEndY = lineCenterY + diagonalLength * Math.sin(shafRad);
+
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.lineTo(finalEndX, finalEndY);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        // Pin Poros Tengah
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 3.5 * dynamicScale, 0, 2 * Math.PI);
+        ctx.fillStyle = "#EAB308";
+        ctx.fill();
+
+        // ==========================================
+        // KOMPAS
+        // ==========================================
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, radiusKompas, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(251, 146, 60, 0.25)";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, radiusKompas - 8 * dynamicScale, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(74, 222, 128, 0.3)";
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(compassX, compassY - radiusKompas - 6 * dynamicScale);
+        ctx.lineTo(compassX, compassY + radiusKompas + 6 * dynamicScale);
+        ctx.moveTo(compassX - radiusKompas - 6 * dynamicScale, compassY);
+        ctx.lineTo(compassX + radiusKompas + 6 * dynamicScale, compassY);
+        ctx.lineWidth = 0.8;
+        ctx.strokeStyle = "#475569";
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(compassX, compassY - radiusKompas + 3 * dynamicScale);
+        ctx.lineTo(compassX - 4 * dynamicScale, compassY);
+        ctx.lineTo(compassX + 4 * dynamicScale, compassY);
+        ctx.closePath();
+        ctx.fillStyle = "#EF4444";
+        ctx.fill();
+
+        ctx.fillStyle = "#1E293B";
+        const fontSize = Math.max(9, Math.round(11 * dynamicScale));
+        ctx.font = `bold ${fontSize}px "Plus Jakarta Sans", Arial`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("U", compassX, compassY - radiusKompas - 12 * dynamicScale);
+        ctx.fillText("S", compassX, compassY + radiusKompas + 12 * dynamicScale);
+        ctx.fillText("B", compassX - radiusKompas - 12 * dynamicScale, compassY);
+        ctx.fillText("T", compassX + radiusKompas + 12 * dynamicScale, compassY);
+
+        ctx.beginPath();
+        ctx.arc(compassX, compassY, 3 * dynamicScale, 0, 2 * Math.PI);
+        ctx.fillStyle = "#0F172A";
+        ctx.fill();
+        ctx.strokeStyle = "#FFFFFF";
+        ctx.stroke();
+      }
+
+      document.getElementById("btnDraw").addEventListener("click", drawSimulation);
+
+      document.getElementById("btnDownload").addEventListener("click", function () {
+        const link = document.createElement("a");
+        link.download = "Laporan-Akurasi-Kiblat-Masjid.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+
+      window.addEventListener("resize", resizeCanvas);
+      window.addEventListener("DOMContentLoaded", resizeCanvas);
+    </script>
+  </body>
+</html>
