@@ -47,18 +47,36 @@
 
             <div>
               <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Sudut Hadap Bangunan</label>
-              <div class="relative mt-1.5">
-                <input
-                  type="number"
-                  id="masjidAngle"
-                  value="285"
-                  min="0"
-                  max="360"
-                  class="w-full p-2.5 pl-4 bg-white border border-slate-200 rounded-xl font-bold text-blue-600 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
-                />
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-500">° AZIMUTH</span>
+              <div class="flex gap-2 mt-1.5">
+                <div class="relative flex-1">
+                  <input
+                    type="number"
+                    id="masjidAngle"
+                    value="285"
+                    min="0"
+                    max="360"
+                    class="w-full p-2.5 pl-4 bg-white border border-slate-200 rounded-xl font-bold text-blue-600 text-sm focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all outline-none"
+                  />
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-500">° AZIMUTH</span>
+                </div>
+
+                <button
+                  id="btnAutoAzimuth"
+                  type="button"
+                  class="bg-amber-500 hover:bg-amber-600 text-white px-3 rounded-xl font-semibold text-xs transition-all active:scale-95 shadow-md shadow-amber-500/10 flex items-center gap-1 shrink-0"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 009 11a13.916 13.916 0 00-4.303-9.44l-.054-.09A13.916 13.916 0 019 11a13.916 13.916 0 012.247 7.49M12 11c.143 0 .285.004.426.012M12 11c2.836 0 5.43-.791 7.633-2.164m-4.195 7.452A13.915 13.915 0 0019 11a13.916 13.916 0 00-4.303-9.44l-.054-.09A13.916 13.916 0 0119 11a13.916 13.916 0 012.247 7.49M12 21c-3.314 0-6-2.686-6-6s2.686-6 6-6 6 2.686 6 6-2.686 6-6 6z"
+                    />
+                  </svg>
+                  Ambil Arah HP
+                </button>
               </div>
-              <span class="text-[10px] text-slate-400 mt-1 block">*Sesuai tembakan kompas di dinding mihrab</span>
+              <span class="text-[10px] text-slate-400 mt-1 block">*Senterkan HP sejajar dinding atau gunakan tombol otomatis</span>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -246,7 +264,7 @@
         ctx.restore();
 
         // ==========================================
-        // SMART FIX SAF: TETEP 100% SIKU TEGAK LURUS ($90^\circ$)
+        // SMART FIX SAF: TETEP 100% SIKU TEGAK LURUS (90 DEGREE)
         // ==========================================
         ctx.save();
         ctx.translate(centerX, centerY);
@@ -257,7 +275,6 @@
         ctx.rotate(-masjidRad);
         ctx.translate(-centerX, -centerY);
 
-        // Itunan sudut siku murni ngetutne kompas asli arah kiblat (294°)
         const shafRad = (kiblatAngle * Math.PI) / 180;
         ctx.strokeStyle = "#10B981";
         ctx.lineWidth = 2 * dynamicScale;
@@ -271,8 +288,6 @@
 
           const startX = lineCenterX - diagonalLength * Math.cos(shafRad);
           const startY = lineCenterY - diagonalLength * Math.sin(shafRad);
-          const endX = lineCenterX + diagonalLength * Math.cos(shafRad);
-          const endY = lineCenterY + dynamicScale + diagonalLength * Math.cos(shafRad);
           const finalEndX = lineCenterX + diagonalLength * Math.cos(shafRad);
           const finalEndY = lineCenterY + diagonalLength * Math.sin(shafRad);
 
@@ -337,6 +352,66 @@
         ctx.stroke();
       }
 
+      // ==========================================
+      // LOGIK LOGIC DETEKSI AZIMUTH OTOMATIS
+      // ==========================================
+      function initAutoAzimuth() {
+        // Khusus iOS/iPhone butuh ijin eksplisit untuk deviceorientation
+        if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+          DeviceOrientationEvent.requestPermission()
+            .then((permissionState) => {
+              if (permissionState === "granted") {
+                startCompassListener();
+              } else {
+                alert("Izin akses sensor kompas ditolak oleh pengguna.");
+              }
+            })
+            .catch(() => alert("Gagal meminta izin sensor kompas."));
+        } else {
+          // Android / Browser non-iOS langsung jalan
+          startCompassListener();
+        }
+      }
+
+      function startCompassListener() {
+        const handler = (event) => {
+          let heading = null;
+
+          // Deteksi webkitCompassHeading (Paling akurat di perangkat iOS/Safari)
+          if (event.webkitCompassHeading !== undefined) {
+            heading = event.webkitCompassHeading;
+          }
+          // Perangkat Android menggunakan alpha (biasanya butuh absolute orientation)
+          else if (event.alpha !== null) {
+            // Mengubah orientasi counter-clockwise menjadi clockwise compass azimuth
+            heading = (360 - event.alpha) % 360;
+          }
+
+          if (heading !== null) {
+            const finalHeading = Math.round(heading);
+            document.getElementById("masjidAngle").value = finalHeading;
+            drawSimulation();
+
+            // Hapus listener setelah dapet data biar inputnya ga mengunci/goyang terus
+            window.removeEventListener("deviceorientation", handler);
+            window.removeEventListener("deviceorientationabsolute", handler);
+            alert(`🎯 Berhasil! Azimut HP terdeteksi: ${finalHeading}°`);
+          } else {
+            alert("Sensor kompas terdeteksi, namun tidak mengembalikan data arah.");
+          }
+        };
+
+        // Coba gunakan versi Absolute (Android Chrome modern butuh ini agar akurat mengacu ke Kutub Utara)
+        if ("ondeviceorientationabsolute" in window) {
+          window.addEventListener("deviceorientationabsolute", handler, { once: false });
+        } else if ("ondeviceorientation" in window) {
+          window.addEventListener("deviceorientation", handler, { once: false });
+        } else {
+          alert("Perangkat atau browser Anda tidak mendukung sensor orientasi/kompas.");
+        }
+      }
+
+      document.getElementById("btnAutoAzimuth").addEventListener("click", initAutoAzimuth);
       document.getElementById("btnDraw").addEventListener("click", drawSimulation);
 
       document.getElementById("btnDownload").addEventListener("click", function () {
