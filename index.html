@@ -12,6 +12,20 @@
       body {
         font-family: "Plus Jakarta Sans", sans-serif;
       }
+      /* Animasi Halus untuk Modal Pop-up */
+      .modal-fade-in {
+        animation: fadeIn 0.2s ease-out forwards;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
     </style>
   </head>
   <body class="bg-slate-50 min-h-screen flex items-center justify-center p-3 sm:p-6 md:p-8">
@@ -42,7 +56,7 @@
                 <input type="number" id="kiblatAngle" value="294" class="w-full p-2.5 pl-4 bg-slate-200/60 border border-slate-200 rounded-xl font-bold text-slate-600 cursor-not-allowed text-sm focus:outline-none" readonly />
                 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400">° UTARA</span>
               </div>
-              <span class="text-[10px] text-slate-400 mt-1 block">*Konstanta Geografis Nusantara (Locked 294°)</span>
+              <span class="text-[10px] text-slate-400 mt-1 block">*Konstanta Geografis Yogyakarta (Locked 294°)</span>
             </div>
 
             <div>
@@ -76,7 +90,32 @@
                   Ambil Arah HP
                 </button>
               </div>
-              <span class="text-[10px] text-slate-400 mt-1 block">*Senterkan HP sejajar dinding atau gunakan tombol otomatis</span>
+            </div>
+
+            <div class="bg-amber-50/50 border border-amber-200/70 p-3 rounded-xl">
+              <div class="flex justify-between items-center">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-amber-800">Kalibrasi Kompas (Koreksi)</label>
+                <button
+                  id="btnHelpCalibration"
+                  type="button"
+                  class="h-4 w-4 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-900 font-bold text-[10px] flex items-center justify-center transition-all"
+                  title="Panduan Kalibrasi Fisik HP"
+                >
+                  ?
+                </button>
+              </div>
+              <div class="relative mt-1.5">
+                <input
+                  type="number"
+                  id="compassOffset"
+                  value="0"
+                  step="0.1"
+                  class="w-full p-2 pl-3 bg-white border border-amber-200 rounded-lg font-medium text-amber-700 text-xs focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all outline-none"
+                  placeholder="Misal: -2 atau 3.5"
+                />
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-amber-500">° DEV</span>
+              </div>
+              <span class="text-[9px] text-amber-600/80 mt-1 block leading-tight">*Klik tanda (?) untuk cara menormalkan akurasi sensor HP secara fisik.</span>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
@@ -136,10 +175,60 @@
       </div>
     </div>
 
+    <div id="modalCalibration" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+      <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 modal-fade-in flex flex-col gap-4">
+        <div class="flex justify-between items-start">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🔄</span>
+            <h3 class="font-bold text-slate-800 text-sm sm:text-base tracking-tight">Cara Kalibrasi Sensor HP</h3>
+          </div>
+          <button id="btnCloseModal" class="text-slate-400 hover:text-slate-600 font-bold text-lg focus:outline-none">&times;</button>
+        </div>
+
+        <div class="bg-slate-50 rounded-xl p-4 flex justify-center items-center border border-slate-100">
+          <svg class="w-40 h-20 text-amber-500" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z" stroke-dasharray="4 2" class="opacity-40" />
+            <path d="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z">
+              <animate attributeName="stroke-dashoffset" values="100;0" dur="4s" repeatCount="indefinite" />
+            </path>
+            <circle r="3" fill="#1E3A8A">
+              <animateMotion dur="4s" repeatCount="indefinite" path="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z" />
+            </circle>
+          </svg>
+        </div>
+
+        <div class="text-xs text-slate-600 flex flex-col gap-2.5 leading-relaxed">
+          <p>Jika arah kompas terasa melenceng atau tidak stabil, sistem operasi HP butuh penyelarasan medan magnet bumi.</p>
+          <ol class="list-decimal pl-4 flex flex-col gap-1 text-slate-700 font-medium">
+            <li>Pegang HP dengan kokoh di tangan Anda.</li>
+            <li>Gerakkan/ayunkan HP di udara membentuk pola <strong>Angka 8 (Infinity Loop)</strong> secara kontinu.</li>
+            <li>Lakukan gerakan memutar tersebut sebanyak <strong>3 sampai 5 kali</strong>.</li>
+            <li>Selesai! Tekan kembali tombol <strong>"Ambil Arah HP"</strong> untuk membaca sudut baru yang lebih akurat.</li>
+          </ol>
+        </div>
+
+        <button id="btnUnderstand" class="w-full bg-slate-900 text-white py-2 rounded-xl font-semibold text-xs hover:bg-slate-800 transition-all">Saya Mengerti</button>
+      </div>
+    </div>
+
     <script>
       const canvas = document.getElementById("kiblatCanvas");
       const container = document.getElementById("canvasContainer");
       const ctx = canvas.getContext("2d");
+
+      // Elements Modal
+      const modal = document.getElementById("modalCalibration");
+      const btnHelp = document.getElementById("btnHelpCalibration");
+      const btnClose = document.getElementById("btnCloseModal");
+      const btnUnderstand = document.getElementById("btnUnderstand");
+
+      // Logic Buka Tutup Modal
+      btnHelp.addEventListener("click", () => modal.classList.remove("hidden"));
+      btnClose.addEventListener("click", () => modal.classList.add("hidden"));
+      btnUnderstand.addEventListener("click", () => modal.classList.add("hidden"));
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.add("hidden");
+      });
 
       function resizeCanvas() {
         const containerWidth = container.clientWidth - (window.innerWidth < 640 ? 24 : 32);
@@ -151,8 +240,13 @@
       function drawSimulation() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const kiblatAngle = 294; // VALUE FIXED 294
-        const masjidAngle = parseFloat(document.getElementById("masjidAngle").value) || 0;
+        const kiblatAngle = 294;
+        const rawMasjidAngle = parseFloat(document.getElementById("masjidAngle").value) || 0;
+        const offset = parseFloat(document.getElementById("compassOffset").value) || 0;
+
+        let masjidAngle = (rawMasjidAngle + offset) % 360;
+        if (masjidAngle < 0) masjidAngle += 360;
+
         const wMeter = parseFloat(document.getElementById("masjidWidthMeter").value) || 1;
         const lMeter = parseFloat(document.getElementById("masjidLengthMeter").value) || 1;
 
@@ -171,7 +265,8 @@
         const wPixel = wMeter * pixelPerMeter;
         const lPixel = lMeter * pixelPerMeter;
 
-        document.getElementById("scaleInfo").innerHTML = `💡 <strong>Sistem Auto-Scale:</strong> 1 Meter nyata dikonversi otomatis menjadi <strong>${pixelPerMeter.toFixed(1)} piksel</strong> pada layar monitor.`;
+        let offsetText = offset !== 0 ? ` (Koreksi Kalibrasi: ${offset > 0 ? "+" : ""}${offset}°)` : "";
+        document.getElementById("scaleInfo").innerHTML = `💡 <strong>Sistem Auto-Scale:</strong> 1 Meter dikonversi otomatis menjadi <strong>${pixelPerMeter.toFixed(1)} piksel</strong>.${offsetText}`;
         document.getElementById("txtDimensionLabel").innerText = `📐 Dimensi: ${wMeter}m x ${lMeter}m`;
 
         let selisih = kiblatAngle - masjidAngle;
@@ -264,7 +359,7 @@
         ctx.restore();
 
         // ==========================================
-        // SMART FIX SAF: TETEP 100% SIKU TEGAK LURUS (90 DEGREE)
+        // SMART FIX SAF: TETEP 100% SIKU TEGAK LURUS
         // ==========================================
         ctx.save();
         ctx.translate(centerX, centerY);
@@ -282,9 +377,9 @@
         const diagonalLength = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height) * 2;
         const step = Math.max(18, 25 * dynamicScale);
 
-        for (let offset = -diagonalLength; offset < diagonalLength; offset += step) {
-          const lineCenterX = centerX + offset * Math.cos(kiblatRad);
-          const lineCenterY = centerY + offset * Math.sin(kiblatRad);
+        for (let offsetValue = -diagonalLength; offsetValue < diagonalLength; offsetValue += step) {
+          const lineCenterX = centerX + offsetValue * Math.cos(kiblatRad);
+          const lineCenterY = centerY + offsetValue * Math.sin(kiblatRad);
 
           const startX = lineCenterX - diagonalLength * Math.cos(shafRad);
           const startY = lineCenterY - diagonalLength * Math.sin(shafRad);
@@ -353,10 +448,9 @@
       }
 
       // ==========================================
-      // LOGIK LOGIC DETEKSI AZIMUTH OTOMATIS
+      // LOGIC DETEKSI AZIMUTH OTOMATIS
       // ==========================================
       function initAutoAzimuth() {
-        // Khusus iOS/iPhone butuh ijin eksplisit untuk deviceorientation
         if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
           DeviceOrientationEvent.requestPermission()
             .then((permissionState) => {
@@ -368,7 +462,6 @@
             })
             .catch(() => alert("Gagal meminta izin sensor kompas."));
         } else {
-          // Android / Browser non-iOS langsung jalan
           startCompassListener();
         }
       }
@@ -377,13 +470,9 @@
         const handler = (event) => {
           let heading = null;
 
-          // Deteksi webkitCompassHeading (Paling akurat di perangkat iOS/Safari)
           if (event.webkitCompassHeading !== undefined) {
             heading = event.webkitCompassHeading;
-          }
-          // Perangkat Android menggunakan alpha (biasanya butuh absolute orientation)
-          else if (event.alpha !== null) {
-            // Mengubah orientasi counter-clockwise menjadi clockwise compass azimuth
+          } else if (event.alpha !== null) {
             heading = (360 - event.alpha) % 360;
           }
 
@@ -392,7 +481,6 @@
             document.getElementById("masjidAngle").value = finalHeading;
             drawSimulation();
 
-            // Hapus listener setelah dapet data biar inputnya ga mengunci/goyang terus
             window.removeEventListener("deviceorientation", handler);
             window.removeEventListener("deviceorientationabsolute", handler);
             alert(`🎯 Berhasil! Azimut HP terdeteksi: ${finalHeading}°`);
@@ -401,7 +489,6 @@
           }
         };
 
-        // Coba gunakan versi Absolute (Android Chrome modern butuh ini agar akurat mengacu ke Kutub Utara)
         if ("ondeviceorientationabsolute" in window) {
           window.addEventListener("deviceorientationabsolute", handler, { once: false });
         } else if ("ondeviceorientation" in window) {
@@ -411,8 +498,14 @@
         }
       }
 
+      // Event Listeners Input
       document.getElementById("btnAutoAzimuth").addEventListener("click", initAutoAzimuth);
       document.getElementById("btnDraw").addEventListener("click", drawSimulation);
+
+      document.getElementById("compassOffset").addEventListener("input", drawSimulation);
+      document.getElementById("masjidAngle").addEventListener("input", drawSimulation);
+      document.getElementById("masjidWidthMeter").addEventListener("input", drawSimulation);
+      document.getElementById("masjidLengthMeter").addEventListener("input", drawSimulation);
 
       document.getElementById("btnDownload").addEventListener("click", function () {
         const link = document.createElement("a");
