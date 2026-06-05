@@ -9,24 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700&display=swap" rel="stylesheet" />
-    <style>
-      body {
-        font-family: "Plus Jakarta Sans", sans-serif;
-      }
-      .modal-fade-in {
-        animation: fadeIn 0.2s ease-out forwards;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-3 sm:p-6 md:p-8">
     <div class="bg-white rounded-3xl shadow-[0_20px_50px_rgba(8,112,184,0.07)] border border-slate-100 w-full max-w-6xl overflow-hidden flex flex-col md:flex-row">
@@ -85,7 +68,6 @@
                   />
                   <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-blue-500">° AZIMUTH</span>
                 </div>
-
                 <button
                   id="btnAutoAzimuth"
                   type="button"
@@ -162,7 +144,6 @@
               </svg>
               <span>Export File PNG</span>
             </button>
-
             <button id="btnDownloadPDF" class="w-full bg-red-600 text-white py-2.5 rounded-xl font-semibold text-xs hover:bg-red-700 active:scale-[0.98] transition-all shadow-md flex items-center justify-center gap-1.5">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -170,7 +151,6 @@
               <span>Export File PDF</span>
             </button>
           </div>
-
           <div id="scaleInfo" class="text-[10px] sm:text-[11px] leading-relaxed text-slate-500 bg-slate-200/40 border border-slate-200/60 p-3 rounded-xl mt-1"></div>
         </div>
       </div>
@@ -180,11 +160,9 @@
           <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 shrink-0"> <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span> MONITOR CANVAS PREVIEW </span>
           <span id="txtDimensionLabel" class="text-[10px] sm:text-xs font-semibold text-slate-600 bg-white px-2.5 py-1 border border-slate-100 rounded-full shadow-sm whitespace-nowrap"></span>
         </div>
-
         <div id="canvasContainer" class="w-full bg-white p-3 sm:p-4 rounded-2xl shadow-[0_10px_30px_rgba(0,0,0,0.02)] border border-slate-100/80 flex items-center justify-center overflow-hidden">
           <canvas id="kiblatCanvas" class="bg-slate-50/50 rounded-xl w-full h-auto max-w-full"></canvas>
         </div>
-
         <div id="rekomendasiInfo" class="text-[10px] sm:text-[11px] leading-relaxed p-3 rounded-xl border mt-3"></div>
       </div>
     </div>
@@ -201,12 +179,8 @@
         <div class="bg-slate-50 rounded-xl p-4 flex justify-center items-center border border-slate-100">
           <svg class="w-40 h-20 text-amber-500" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2.5">
             <path d="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z" stroke-dasharray="4 2" class="opacity-40" />
-            <path d="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z">
-              <animate attributeName="stroke-dashoffset" values="100;0" dur="4s" repeatCount="indefinite" />
-            </path>
-            <circle r="3" fill="#1E3A8A">
-              <animateMotion dur="4s" repeatCount="indefinite" path="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z" />
-            </circle>
+            <path d="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z"><animate attributeName="stroke-dashoffset" values="100;0" dur="4s" repeatCount="indefinite" /></path>
+            <circle r="3" fill="#1E3A8A"><animateMotion dur="4s" repeatCount="indefinite" path="M 50,25 C 35,5 15,5 15,25 C 15,45 35,45 50,25 C 65,5 85,5 85,25 C 85,45 65,45 50,25 Z" /></circle>
           </svg>
         </div>
         <div class="text-xs text-slate-600 flex flex-col gap-2.5 leading-relaxed">
@@ -220,393 +194,6 @@
       </div>
     </div>
 
-    <script>
-      const canvas = document.getElementById("kiblatCanvas");
-      const container = document.getElementById("canvasContainer");
-      const ctx = canvas.getContext("2d");
-
-      const modal = document.getElementById("modalCalibration");
-      const btnHelp = document.getElementById("btnHelpCalibration");
-      const btnClose = document.getElementById("btnCloseModal");
-      const btnUnderstand = document.getElementById("btnUnderstand");
-
-      btnHelp.addEventListener("click", () => modal.classList.remove("hidden"));
-      btnClose.addEventListener("click", () => modal.classList.add("hidden"));
-      btnUnderstand.addEventListener("click", () => modal.classList.add("hidden"));
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) modal.classList.add("hidden");
-      });
-
-      function resizeCanvas() {
-        const containerWidth = container.clientWidth - (window.innerWidth < 640 ? 24 : 32);
-        canvas.width = containerWidth;
-        canvas.height = containerWidth * 0.78;
-        drawSimulation(canvas, ctx);
-      }
-
-      function drawSimulation(targetCanvas, targetCtx) {
-        targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
-
-        const kiblatAngle = 294;
-        const rawMasjimAngle = parseFloat(document.getElementById("masjidAngle").value) || 0;
-        const offset = parseFloat(document.getElementById("compassOffset").value) || 0;
-
-        let masjidAngle = (rawMasjimAngle + offset) % 360;
-        if (masjidAngle < 0) masjidAngle += 360;
-
-        const wMeter = parseFloat(document.getElementById("masjidWidthMeter").value) || 1;
-        const lMeter = parseFloat(document.getElementById("masjidLengthMeter").value) || 1;
-
-        const centerX = targetCanvas.width / 2;
-        const centerY = targetCanvas.height / 2;
-        const dynamicScale = targetCanvas.width / 580;
-
-        const compassX = targetCanvas.width - 70 * dynamicScale;
-        const compassY = targetCanvas.height - 70 * dynamicScale;
-        const radiusKompas = Math.max(26, 38 * dynamicScale);
-
-        const maxAllowedPixels = Math.min(targetCanvas.width, targetCanvas.height) * 0.45;
-        const maxMeter = Math.max(wMeter, lMeter);
-        const pixelPerMeter = maxAllowedPixels / maxMeter;
-
-        const wPixel = wMeter * pixelPerMeter;
-        const lPixel = lMeter * pixelPerMeter;
-
-        const scaleInfoEl = document.getElementById("scaleInfo");
-        const dimLabelEl = document.getElementById("txtDimensionLabel");
-
-        let offsetText = offset !== 0 ? ` (Koreksi Kalibrasi: ${offset > 0 ? "+" : ""}${offset}°)` : "";
-        if (scaleInfoEl) scaleInfoEl.innerHTML = `💡 <strong>Sistem Auto-Scale:</strong> 1 Meter dikonversi otomatis menjadi <strong>${pixelPerMeter.toFixed(1)} piksel</strong>.${offsetText}`;
-        if (dimLabelEl) dimLabelEl.innerText = `📐 Dimensi: ${wMeter}m x ${lMeter}m`;
-
-        let selisih = kiblatAngle - masjidAngle;
-        while (selisih > 180) selisih -= 360;
-        while (selisih < -180) selisih += 360;
-
-        const absSelisih = Math.abs(selisih).toFixed(1);
-        const kolomRekomendasi = document.getElementById("rekomendasiInfo");
-
-        let textRekomendasiHTML = "";
-        let isAccurate = false;
-
-        if (parseFloat(absSelisih) === 0) {
-          textRekomendasiHTML = `✅ <strong>Rekomendasi Lapangan:</strong> Struktur bangunan masjid sudah <strong>Sangat Presisi (100% Akurat)</strong> menghadap lurus ke arah kiblat.`;
-          isAccurate = true;
-          if (kolomRekomendasi) kolomRekomendasi.className = "text-[11px] leading-relaxed p-3 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 mt-3";
-        } else {
-          const arahPutar = selisih > 0 ? "KANAN (Utara)" : "KIRI (Selatan)";
-          textRekomendasiHTML = `📌 <strong>Rekomendasi Lapangan:</strong> Garis shaf di dalam masjid harus digeser/dimiringkan sebesar <strong>${absSelisih}° ke arah ${arahPutar}</strong> dari orientasi dinding saat ini agar akurat menghadap Ka'bah.`;
-          isAccurate = false;
-          if (kolomRekomendasi) kolomRekomendasi.className = "text-[11px] leading-relaxed p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-900 mt-3";
-        }
-
-        if (kolomRekomendasi) kolomRekomendasi.innerHTML = textRekomendasiHTML;
-
-        // LINE LINTASAN KIBLAT
-        const kiblatRad = ((kiblatAngle - 90) * Math.PI) / 180;
-        const lineLength = Math.min(targetCanvas.width, targetCanvas.height) * 0.48;
-        const kabahX = centerX + lineLength * Math.cos(kiblatRad);
-        const kabahY = centerY + lineLength * Math.sin(kiblatRad);
-
-        targetCtx.save();
-        targetCtx.beginPath();
-        targetCtx.moveTo(centerX - lineLength * 0.5 * Math.cos(kiblatRad), centerY - lineLength * 0.5 * Math.sin(kiblatRad));
-        targetCtx.lineTo(kabahX, kabahY);
-        targetCtx.lineWidth = 2 * dynamicScale;
-        targetCtx.strokeStyle = "#475569";
-        targetCtx.setLineDash([6 * dynamicScale, 4 * dynamicScale]);
-        targetCtx.stroke();
-        targetCtx.restore();
-
-        // KA'BAH
-        targetCtx.save();
-        targetCtx.translate(kabahX, kabahY);
-        targetCtx.rotate((kiblatAngle * Math.PI) / 180);
-        const kabahSize = Math.max(18, 26 * dynamicScale);
-        targetCtx.fillStyle = "#0F172A";
-        targetCtx.fillRect(-kabahSize / 2, -kabahSize / 2, kabahSize, kabahSize);
-        targetCtx.fillStyle = "#EAB308";
-        targetCtx.fillRect(-kabahSize / 2, -kabahSize / 2 + 5 * dynamicScale, kabahSize, 3 * dynamicScale);
-        targetCtx.beginPath();
-        targetCtx.moveTo(0, kabahSize / 2 + 2);
-        targetCtx.lineTo(-4 * dynamicScale, kabahSize / 2 + 8 * dynamicScale);
-        targetCtx.lineTo(4 * dynamicScale, kabahSize / 2 + 8 * dynamicScale);
-        targetCtx.closePath();
-        targetCtx.fillStyle = "#0F172A";
-        targetCtx.fill();
-        targetCtx.restore();
-
-        // KOTAK MASJID
-        const masjidRad = (masjidAngle * Math.PI) / 180;
-        targetCtx.save();
-        targetCtx.translate(centerX, centerY);
-        targetCtx.rotate(masjidRad);
-        targetCtx.fillStyle = "#1E3A8A";
-        targetCtx.strokeStyle = "#0284C7";
-        targetCtx.lineWidth = 3 * dynamicScale;
-        targetCtx.lineJoin = "round";
-        targetCtx.fillRect(-wPixel / 2, -lPixel / 2, wPixel, lPixel);
-        targetCtx.strokeRect(-wPixel / 2, -lPixel / 2, wPixel, lPixel);
-
-        const mihrabW = wPixel * 0.22;
-        const mihrabL = Math.max(10, lPixel * 0.16);
-        targetCtx.fillStyle = "#0284C7";
-        targetCtx.fillRect(-mihrabW / 2, -lPixel / 2 - mihrabL, mihrabW, mihrabL);
-        targetCtx.strokeRect(-mihrabW / 2, -lPixel / 2 - mihrabL, mihrabW, mihrabL);
-
-        targetCtx.strokeStyle = "rgba(255, 255, 255, 0.15)";
-        targetCtx.lineWidth = 1 * dynamicScale;
-        const safGap = Math.max(15, 25 * dynamicScale);
-        for (let i = -lPixel / 2 + safGap; i < lPixel / 2; i += safGap) {
-          targetCtx.beginPath();
-          targetCtx.moveTo(-wPixel / 2 + 4, i);
-          targetCtx.lineTo(wPixel / 2 - 4, i);
-          targetCtx.stroke();
-        }
-        targetCtx.restore();
-
-        // SMART FIX SAF
-        targetCtx.save();
-        targetCtx.translate(centerX, centerY);
-        targetCtx.rotate(masjidRad);
-        targetCtx.beginPath();
-        targetCtx.rect(-wPixel / 2, -lPixel / 2, wPixel, lPixel);
-        targetCtx.clip();
-        targetCtx.rotate(-masjidRad);
-        targetCtx.translate(-centerX, -centerY);
-
-        const shafRad = (kiblatAngle * Math.PI) / 180;
-        targetCtx.strokeStyle = "#10B981";
-        targetCtx.lineWidth = 2 * dynamicScale;
-
-        const diagonalLength = Math.sqrt(targetCanvas.width * targetCanvas.width + targetCanvas.height * targetCanvas.height) * 2;
-        const step = Math.max(18, 25 * dynamicScale);
-
-        for (let offsetValue = -diagonalLength; offsetValue < diagonalLength; offsetValue += step) {
-          const lineCenterX = centerX + offsetValue * Math.cos(kiblatRad);
-          const lineCenterY = centerY + offsetValue * Math.sin(kiblatRad);
-          const startX = lineCenterX - diagonalLength * Math.cos(shafRad);
-          const startY = lineCenterY - diagonalLength * Math.sin(shafRad);
-          const finalEndX = lineCenterX + diagonalLength * Math.cos(shafRad);
-          const finalEndY = lineCenterY + diagonalLength * Math.sin(shafRad);
-
-          targetCtx.beginPath();
-          targetCtx.moveTo(startX, startY);
-          targetCtx.lineTo(finalEndX, finalEndY);
-          targetCtx.stroke();
-        }
-        targetCtx.restore();
-
-        targetCtx.beginPath();
-        targetCtx.arc(centerX, centerY, 3.5 * dynamicScale, 0, 2 * Math.PI);
-        targetCtx.fillStyle = "#EAB308";
-        targetCtx.fill();
-
-        // KOMPAS
-        targetCtx.beginPath();
-        targetCtx.arc(compassX, compassY, radiusKompas, 0, 2 * Math.PI);
-        targetCtx.fillStyle = "rgba(251, 146, 60, 0.25)";
-        targetCtx.fill();
-        targetCtx.beginPath();
-        targetCtx.arc(compassX, compassY, radiusKompas - 8 * dynamicScale, 0, 2 * Math.PI);
-        targetCtx.fillStyle = "rgba(74, 222, 128, 0.3)";
-        targetCtx.fill();
-
-        targetCtx.beginPath();
-        targetCtx.moveTo(compassX, compassY - radiusKompas - 6 * dynamicScale);
-        targetCtx.lineTo(compassX, compassY + radiusKompas + 6 * dynamicScale);
-        targetCtx.moveTo(compassX - radiusKompas - 6 * dynamicScale, compassY);
-        targetCtx.lineTo(compassX + radiusKompas + 6 * dynamicScale, compassY);
-        targetCtx.lineWidth = 0.8;
-        targetCtx.strokeStyle = "#475569";
-        targetCtx.stroke();
-
-        targetCtx.beginPath();
-        targetCtx.moveTo(compassX, compassY - radiusKompas + 3 * dynamicScale);
-        targetCtx.lineTo(compassX - 4 * dynamicScale, compassY);
-        targetCtx.lineTo(compassX + 4 * dynamicScale, compassY);
-        targetCtx.closePath();
-        targetCtx.fillStyle = "#EF4444";
-        targetCtx.fill();
-
-        targetCtx.fillStyle = "#1E293B";
-        const fontSize = Math.max(9, Math.round(11 * dynamicScale));
-        targetCtx.font = `bold ${fontSize}px Arial`;
-        targetCtx.textAlign = "center";
-        targetCtx.textBaseline = "middle";
-        targetCtx.fillText("U", compassX, compassY - radiusKompas - 12 * dynamicScale);
-        targetCtx.fillText("S", compassX, compassY + radiusKompas + 12 * dynamicScale);
-        targetCtx.fillText("B", compassX - radiusKompas - 12 * dynamicScale, compassY);
-        targetCtx.fillText("T", compassX + radiusKompas + 12 * dynamicScale, compassY);
-
-        targetCtx.beginPath();
-        targetCtx.arc(compassX, compassY, 3 * dynamicScale, 0, 2 * Math.PI);
-        targetCtx.fillStyle = "#0F172A";
-        targetCtx.fill();
-        targetCtx.strokeStyle = "#FFFFFF";
-        targetCtx.stroke();
-
-        return { text: textRekomendasiHTML, status: isAccurate };
-      }
-
-      function initAutoAzimuth() {
-        if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
-          DeviceOrientationEvent.requestPermission()
-            .then((permissionState) => {
-              if (permissionState === "granted") startCompassListener();
-              else alert("Izin akses sensor kompas ditolak.");
-            })
-            .catch(() => alert("Gagal meminta izin sensor."));
-        } else {
-          startCompassListener();
-        }
-      }
-
-      function startCompassListener() {
-        const handler = (event) => {
-          let heading = null;
-          if (event.webkitCompassHeading !== undefined) heading = event.webkitCompassHeading;
-          else if (event.alpha !== null) heading = (360 - event.alpha) % 360;
-
-          if (heading !== null) {
-            const finalHeading = Math.round(heading);
-            document.getElementById("masjidAngle").value = finalHeading;
-            drawSimulation(canvas, ctx);
-            window.removeEventListener("deviceorientationabsolute", handler);
-            alert(`🎯 Berhasil! Azimut HP: ${finalHeading}°`);
-          }
-        };
-        window.addEventListener("deviceorientationabsolute", handler, { once: true });
-      }
-
-      document.getElementById("btnAutoAzimuth").addEventListener("click", initAutoAzimuth);
-      document.getElementById("btnDraw").addEventListener("click", () => drawSimulation(canvas, ctx));
-
-      document.getElementById("compassOffset").addEventListener("input", () => drawSimulation(canvas, ctx));
-      document.getElementById("masjidAngle").addEventListener("input", () => drawSimulation(canvas, ctx));
-      document.getElementById("masjidWidthMeter").addEventListener("input", () => drawSimulation(canvas, ctx));
-      document.getElementById("masjidLengthMeter").addEventListener("input", () => drawSimulation(canvas, ctx));
-
-      // DOWNLOAD PNG
-      document.getElementById("btnDownload").addEventListener("click", function () {
-        const name = document.getElementById("masjidName").value || "Masjid";
-        const link = document.createElement("a");
-        link.download = `Sketsa_Kiblat_${name.replace(/\s+/g, "_")}.png`;
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-      });
-
-      // ==========================================================
-      // FIX PARIPURNA EXPORT PDF (APPEND -> RENDER -> REMOVE DOM)
-      // ==========================================================
-      document.getElementById("btnDownloadPDF").addEventListener("click", function () {
-        const name = document.getElementById("masjidName").value || "Masjid";
-        const address = document.getElementById("masjidAddress").value || "-";
-        const rawMasjimAngle = parseFloat(document.getElementById("masjidAngle").value) || 0;
-        const offset = parseFloat(document.getElementById("compassOffset").value) || 0;
-        let finalAngle = (rawMasjimAngle + offset) % 360;
-        if (finalAngle < 0) finalAngle += 360;
-
-        // 1. Ambil data visual biner Base64 dari monitor canvas utama
-        const base64Data = canvas.toDataURL("image/png");
-
-        // 2. Kalkulasi data string rekomendasi pergeseran arah ter-update
-        const kal = drawSimulation(canvas, ctx);
-
-        // 3. Atur warna latar belakang box kesimpulan secara dinamis
-        let boxBg = "#fff9db",
-          boxBorder = "#fef08a",
-          boxColor = "#744210";
-        if (kal.status === true) {
-          boxBg = "#f0fdf4";
-          boxBorder = "#bbf7d0";
-          boxColor = "#166534";
-        }
-
-        // 4. Siapkan wadah element fisik tersembunyi agar terbaca oleh engine html2canvas
-        let pdfContainer = document.getElementById("hidden-pdf-container");
-        if (!pdfContainer) {
-          pdfContainer = document.createElement("div");
-          pdfContainer.id = "hidden-pdf-container";
-          pdfContainer.style.position = "absolute";
-          pdfContainer.style.left = "-9999px";
-          pdfContainer.style.top = "-9999px";
-          document.body.appendChild(pdfContainer);
-        }
-        pdfContainer.innerHTML = ""; // Bersihkan sisa render sebelumnya
-
-        // 5. Rakit template HTML laporan ke dalam wadah fisik tersembunyi
-        const contentWrapper = document.createElement("div");
-        contentWrapper.style.width = "680px";
-        contentWrapper.style.padding = "30px";
-        contentWrapper.style.backgroundColor = "#FFFFFF";
-        contentWrapper.style.fontFamily = "Arial, sans-serif";
-        contentWrapper.style.boxSizing = "border-box";
-
-        contentWrapper.innerHTML = `
-          <div style="border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 25px;">
-            <h1 style="font-size: 18px; font-weight: bold; color: #0f172a; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">LAPORAN VERIFIKASI AKURASI KIBLAT</h1>
-            <p style="font-size: 10px; color: #64748b; margin: 4px 0 0 0;">Sistem Pengukuran &amp; Visualisasi Geografis Lapangan</p>
-            
-            <table style="width: 100%; margin-top: 15px; font-size: 11px; border-collapse: collapse; background-color: #f8fafc; border: 1px solid #e2e8f0;">
-              <tr>
-                <td style="padding: 10px; color: #64748b; border-bottom: 1px solid #e2e8f0; width: 22%;">Nama Masjid</td>
-                <td style="padding: 10px; font-weight: bold; color: #0f172a; border-bottom: 1px solid #e2e8f0;">: ${name}</td>
-                <td style="padding: 10px; color: #64748b; border-bottom: 1px solid #e2e8f0; width: 22%;">Kiblat Wilayah</td>
-                <td style="padding: 10px; font-weight: bold; color: #0f172a; border-bottom: 1px solid #e2e8f0;">: 294° (Konstanta)</td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; color: #64748b;">Lokasi Wilayah</td>
-                <td style="padding: 10px; font-weight: bold; color: #0f172a;">: ${address}</td>
-                <td style="padding: 10px; color: #64748b;">Arah Dinding</td>
-                <td style="padding: 10px; font-weight: bold; color: #2563eb;">: ${finalAngle}° AZIMUTH</td>
-              </tr>
-            </table>
-          </div>
-          
-          <p style="font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 8px 0;">SKETSA GRAFIK SIMULASI LAPANGAN</p>
-          <div style="text-align: center; margin-bottom: 25px; border: 1px solid #e2e8f0; padding: 12px; background: #f8fafc; border-radius: 8px;">
-            <img src="${base64Data}" style="width: 100%; height: auto; max-width: 580px; display: inline-block;" />
-          </div>
-
-          <p style="font-size: 9px; font-weight: bold; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 8px 0;">KESIMPULAN &amp; REKOMENDASI TAKMIR</p>
-          <div style="font-size: 11px; line-height: 1.6; padding: 15px; border-radius: 8px; background-color: ${boxBg}; border: 1px solid ${boxBorder}; color: ${boxColor}; font-weight: bold;">
-            ${kal.text}
-          </div>
-        `;
-
-        pdfContainer.appendChild(contentWrapper);
-
-        // 6. Konfigurasi kompresi dokumen html2pdf
-        const opt = {
-          margin: [10, 10, 10, 10],
-          filename: `Laporan_Akurasi_Kiblat_${name.replace(/\s+/g, "_")}.pdf`,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            logging: false,
-            scrollX: 0,
-            scrollY: 0,
-          },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        };
-
-        // 7. Berikan delay singkat 300ms agar rendering internal DOM selesai, lalu simpan file
-        setTimeout(() => {
-          html2pdf()
-            .set(opt)
-            .from(contentWrapper)
-            .save()
-            .then(() => {
-              // Hapus isi data kontainer setelah cetak selesai agar hemat resource memori
-              pdfContainer.innerHTML = "";
-            });
-        }, 300);
-      });
-
-      window.addEventListener("resize", resizeCanvas);
-      window.addEventListener("DOMContentLoaded", resizeCanvas);
-    </script>
+    <script src="script.js"></script>
   </body>
 </html>
