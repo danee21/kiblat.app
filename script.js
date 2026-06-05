@@ -9,7 +9,7 @@ const btnUnderstand = document.getElementById("btnUnderstand");
 
 // Tanda tangan biner Base64 untuk Logo Resmi Kemenag RI
 const logoKemenagBase64 =
-  "data:image/png;base64,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";
+  "data:image/png;base64,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";
 
 btnHelp.addEventListener("click", () => modal.classList.remove("hidden"));
 btnClose.addEventListener("click", () => modal.classList.add("hidden"));
@@ -17,6 +17,18 @@ btnUnderstand.addEventListener("click", () => modal.classList.add("hidden"));
 modal.addEventListener("click", (e) => {
   if (e.target === modal) modal.classList.add("hidden");
 });
+
+// FUNGSI VALIDASI UMUM (REUSABLE)
+function validateFormInputs() {
+  const name = document.getElementById("masjidName").value.trim();
+  const address = document.getElementById("masjidAddress").value.trim();
+
+  if (!name || !address) {
+    alert("⚠️ Mohon Maaf, Nama Masjid/Musholla dan Alamat Wilayah wajib diisi terlebih dahulu!");
+    return false;
+  }
+  return true;
+}
 
 function resizeCanvas() {
   const containerWidth = container.clientWidth - (window.innerWidth < 640 ? 24 : 32);
@@ -261,14 +273,22 @@ function startCompassListener() {
 }
 
 document.getElementById("btnAutoAzimuth").addEventListener("click", initAutoAzimuth);
-document.getElementById("btnDraw").addEventListener("click", () => drawSimulation(canvas, ctx));
+
+// VALIDASI DI TOMBOL SIMULASIKAN POSISI
+document.getElementById("btnDraw").addEventListener("click", () => {
+  if (!validateFormInputs()) return; // Jika kosong, batalkan proses
+  drawSimulation(canvas, ctx);
+});
+
 document.getElementById("compassOffset").addEventListener("input", () => drawSimulation(canvas, ctx));
 document.getElementById("masjidAngle").addEventListener("input", () => drawSimulation(canvas, ctx));
 document.getElementById("masjidWidthMeter").addEventListener("input", () => drawSimulation(canvas, ctx));
 document.getElementById("masjidLengthMeter").addEventListener("input", () => drawSimulation(canvas, ctx));
 
-// DOWNLOAD PNG
+// VALIDASI DI TOMBOL DOWNLOAD PNG
 document.getElementById("btnDownload").addEventListener("click", function () {
+  if (!validateFormInputs()) return; // Jika kosong, batalkan proses
+
   const name = document.getElementById("masjidName").value || "Masjid";
   const link = document.createElement("a");
   link.download = `Sketsa_Kiblat_${name.replace(/\s+/g, "_")}.png`;
@@ -276,8 +296,10 @@ document.getElementById("btnDownload").addEventListener("click", function () {
   link.click();
 });
 
-// DOWNLOAD PDF DENGAN KOP SURAT KEMENAG RESMI (BASE64)
+// VALIDASI DI TOMBOL DOWNLOAD PDF
 document.getElementById("btnDownloadPDF").addEventListener("click", function () {
+  if (!validateFormInputs()) return; // Jika kosong, batalkan proses
+
   const name = document.getElementById("masjidName").value || "Masjid";
   const address = document.getElementById("masjidAddress").value || "-";
   const rawMasjimAngle = parseFloat(document.getElementById("masjidAngle").value) || 0;
